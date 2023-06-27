@@ -1,0 +1,258 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<html>
+<style>
+.remove-item {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #dc3545;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.remove-item:hover {
+  background-color: #c82333;
+}
+
+.remove-item:focus {
+  outline: none;
+}
+
+.remove-item::before {
+  content: '\2716'; /* Unicode для символа "✖" */
+  margin-right: 5px;
+}
+
+</style>
+
+<head>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+     <form class="contact-list-form" method="post" >
+    {% csrf_token %}
+     <h1>Создание датасета</h1>
+     <table class="table contact-list-form-table" style="margin-bottom:5px">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Название столбца</th>
+                <th>Тип данных</th>
+                <th>Удаление</th>
+            </tr>
+        </thead>
+        <tbody id="tablebody">
+          {% for i in '123' %}
+                    <tr class="contact-form-entry">
+                        <td class="form-index">{{ i }}</td>
+                        <td class="form-name"><input class="span2" type="text" maxlength="100" name="column{{ i }}" placeholder="Название"></td>
+                        <td class="form-type">
+                            <div class="data-type-container">
+                                <select class="span3" name="drop{{ i }}">
+                                    <option value="" disabled="disabled" style="display:none">Пожалуйста, выберите...</option>
+                                    <optgroup label="Имя">
+                                        <option>Полное имя</option>
+                                        <option>Имя</option>
+                                        <option>Фамилия</option>
+                                    </optgroup>
+                                    <optgroup label="Адрес">
+                                        <option>Страна</option>
+                                        <option>Город</option>
+                                        <option>Адрес</option>
+                                        <option>Почтовый индекс</option>
+                                        <option>Географические координаты</option>
+                                    </optgroup>
+                                    <optgroup label="Номер">
+                                        <option>Случайное число</option>
+                                        <option>СНИЛС</option>
+                                        <option>Номер телефона</option>
+                                    </optgroup>
+                                    <optgroup label="Интернет">
+                                        <option>Электронная почта</option>
+                                        <option>URL</option>
+                                        <option>IP-адрес</option>
+                                        <option>Имя пользователя</option>
+                                        <option>Пароль</option>
+                                        <option>Шестнадцатеричный цвет</option>
+                                        <option>НАТО Фонетический</option>
+                                         <option>ISBN</option>
+                                        <option>GUID</option>
+                                    </optgroup>
+                                    <optgroup label="Утилиты">
+                                        <option>Дата</option>
+                                        <option>Частота</option>
+                                        <option>Булево значение</option>
+                                        <option>Последовательность</option>
+                                        <option>Возраст</option>
+                                        <option>UUID</option>
+                                         <option>Профессия</option>
+                                    </optgroup>
+                                    <optgroup label="Комбинированные данные">
+                                        <option>Финансовые данные</option>
+                                        <option>Цены</option>
+                                        <option>Контрагенты</option>
+                                        <option>Контракты</option>
+                                    </optgroup>
+                                     <optgroup label="Распределения">
+                                        <option>Геометрическое распределение</option>
+                                        <option>Экспоненциальное распределение</option>
+                                        <option>Пуассоновское распределение</option>
+                                        <option>Нормальное распределение</option>
+                                    </optgroup>
+                                </select>
+                                <div class="attribute-container"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="remove-item btn btn-large btn-danger" type="button"><i class="icon-trash icon-white"></i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+        </tbody>
+        </table>
+        <button class="add-item btn btn-large btn-primary" type="button">Добавить столбец</button>
+    <form class="contact-list-form" method="post" action="{% url 'preview' dataset_id=0 %}">
+    {{ form.as_p }}
+    <div class="form-group">
+    </select>
+        <button class="btn btn-success" type="submit">Создать датасет</button>
+        <input type="hidden" name="current_columns" value="{{ currentColumns }}">
+  </div>
+</body>
+<script>
+  var currentColumns = 3;
+  $(document).ready(function() {
+    // Остальной код JavaScript
+    // ...
+
+    // Обработчик события выбора типа данных
+    $("#tablebody").on("change", ".data-type-container select", function() {
+      var selectedOption = $(this).val();
+      var attributeContainer = $(this).siblings(".attribute-container");
+      attributeContainer.empty();
+
+      var attributes = [];
+
+      if (selectedOption === 'Финансовые данные') {
+        attributes = ['Тип транзакции', 'Сумма'];
+      } else if (selectedOption === 'Цены') {
+        attributes = ['Цена продукта', 'Количество', 'Дата доставки'];
+      } else if (selectedOption === 'Контрагенты') {
+        attributes = ['Название', 'ИНН', 'КПП', 'Адрес', 'Телефон'];
+      } else if (selectedOption === 'Контракты') {
+        attributes = ['ID', 'Поставщик', 'Заказчик', 'Продукт', 'Цена', 'Количество', 'Дата доставки', 'Статус'];
+      }
+
+      attributes.forEach(function(attribute) {
+        attributeContainer.append(
+          '<div class="attribute-item">' +
+          '<div class="attribute-label">' + attribute + '</div>' +
+          '<button class="remove-attribute btn btn-danger" onclick="removeAttribute(this)">' +
+          '<i class="icon-remove icon-white"></i>' +
+          '</button>' +
+          '</div>'
+        );
+      });
+    });
+
+    // Функция удаления атрибута
+    $(document).on("click", ".remove-attribute", function() {
+      $(this).parent().remove(); // Удаляем атрибут
+    });
+  });
+
+  // Добавление нового столбца
+  $(document).on("click", ".add-item", function() {
+    var tableBody = $("#tablebody");
+    var lastRowIndex = tableBody.find("tr").length;
+    var newIndex = lastRowIndex + 1;
+
+    var newRowHtml =
+  '<tr class="contact-form-entry">' +
+  '<td class="form-index">' + newIndex + '</td>' +
+  '<td class="form-name">' +
+  '<input class="span2" type="text" maxlength="100" name="column' + newIndex + '" placeholder="Название столбца">' +
+  '</td>' +
+  '<td class="form-type">' +
+  '<div class="data-type-container">' +
+  '<select class="span3" name="drop' + newIndex + '">' +
+  '<option value="" disabled="disabled" style="display:none">Пожалуйста, выберите...</option>' +
+  '<optgroup label="Имя">' +
+  '<option>Полное Имя</option>' +
+  '<option>Имя</option>' +
+  '<option>Фамилия</option>' +
+  '</optgroup>' +
+  '<optgroup label="Адрес">' +
+  '<option>Страна</option>' +
+  '<option>Город</option>' +
+  '<option>Адрес</option>' +
+  '<option>Почтовый индекс</option>' +
+  '<option>Географические координаты</option>' +
+  '<option>Профессия</option>'+
+  '</optgroup>' +
+  '<optgroup label="Номер">' +
+  '<option>Случайное число</option>' +
+  '<option>СНИЛС</option>' +
+  '<option>Номер телефона</option>' +
+  '</optgroup>' +
+  '<optgroup label="Интернет">' +
+  '<option>Электронная почта</option>' +
+  '<option>URL</option>' +
+  '<option>IP-адрес</option>' +
+  '<option>Имя пользователя</option>' +
+  '<option>Пароль</option>' +
+  '<option>Шестнадцатеричный цвет</option>' +
+  '<option>НАТО Фонетический</option>' +
+  '<option>ISBN</option>' +
+  '<option>GUID</option>' +
+  '</optgroup>' +
+  '<optgroup label="Утилиты">' +
+  '<option>Дата</option>' +
+  '<option>Частота</option>' +
+  '<option>Булево значение</option>' +
+  '<option>Последовательность</option>' +
+  '<option>Возраст</option>' +
+  '<option>UUID</option>' +
+  '</optgroup>' +
+  '<optgroup label="Комбинированные данные">' +
+  '<option>Финансовые данные</option>' +
+  '<option>Цены</option>' +
+  '<option>Контрагенты</option>' +
+  '<option>Контракты</option>' +
+  '</optgroup>' +
+  '<optgroup label="Распределения">' +
+  '<option>Геометрическое распределение</option>' +
+  '<option>Экспоненциальное распределение</option>' +
+  '<option>Пуассоновское распределение</option>' +
+  '<option>Нормальное распределение</option>' +
+  '</optgroup>' +
+  '</select>' +
+  '<div class="attribute-container"></div>' +
+  '</div>' +
+  '</td>' +
+  '<td>' +
+  '<button class="remove-item btn btn-large btn-danger" type="button"><i class="icon-trash icon-white"></i></button>' +
+  '</td>' +
+  '</tr>';
+tableBody.append(newRowHtml);
+currentColumns += 1;
+$('input[name="current_columns"]').val(currentColumns);
+
+  });
+
+  // Удаление существующего столбца
+  $(document).on("click", ".remove-item", function() {
+    $(this).closest("tr").remove();
+    currentColumns -= 1;
+             $('input[name="current_columns"]').val(currentColumns);
+  });
+</script>
+</html>
+{% endblock %}

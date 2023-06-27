@@ -1,0 +1,101 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<html>
+<head>
+    <title>Preview Dataset</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <h1>Preview Dataset</h1>
+        <table>
+            <thead>
+                <tr>
+                    {% for column in dataset.columns %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in dataset.values %}
+                    <tr>
+                        {% for value in row %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Скачать файл</h2>
+        <form method="post" action="{% url 'download_dataset' dataset_id %}">
+            {% csrf_token %}
+            <label for="format">Выберите формат данных:</label>
+            <select class="form-control" id="format" name="format">
+                <option value="csv">CSV</option>
+                <option value="json">JSON</option>
+                <option value="xlsx">XLSX</option>
+                <option value="sql">SQL</option>
+            </select>
+            <button class="button" type="submit">Скачать</button>
+        </form>
+        {% if download_error %}
+            <p class="message">{{ download_error }}</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Перегенерировать данные</h2>
+        <form method="post" action="{% url 'regenerate' dataset_id %}">
+            {% csrf_token %}
+            <button class="button" type="submit">Перегенерировать</button>
+        </form>
+        {% if regenerate_error %}
+            <p class="message">{{ regenerate_error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
+{% endblock %}

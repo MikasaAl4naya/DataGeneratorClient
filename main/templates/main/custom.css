@@ -1,0 +1,37 @@
+table.contact-list-form-table {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+table.contact-list-form-table th {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+table.contact-list-form-table td {
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+table.contact-list-form-table td.form-index {
+  font-weight: bold;
+}
+
+table.contact-list-form-table .remove-item {
+  margin-top: 8px;
+}
+
+button.add-item {
+  margin-bottom: 16px;
+}
